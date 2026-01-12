@@ -12,18 +12,20 @@ $("#addPlayerButton").on("click", function () {
             <span class="playerName"></span>
             <div class="chronoDurationSet">
                 <input class="chronoDurationInput minutes" type="number" value="0" min="0" max="59">
-                <label> min</label>
+                <label class="minLabel"> min</label>
                 <input class="chronoDurationInput seconds" type="number" value="40" min="0" max="59">
             </div>
             <div class="chrono">00:00:40</div>
-            <div class="buttonsContainer">
+            <div class="chronoButtonsContainer">
                 <button class="startButton chronoButton">Start</button>
                 <button class="pauseButton chronoButton">Pause</button>
                 <button class="resetButton chronoButton">Reset</button>
             </div>
-            <div class="barreVerte"></div>
-            <div class="barreOrange"></div>
-            <div class="barreRouge"></div>
+            <div class="pyramidContainer">
+                <div class="barreVerte pyramid"></div>
+                <div class="barreOrange pyramid"></div>
+                <div class="barreRouge pyramid"></div>
+            </div>
         </div>`;
 
     const node = $(playerItem);
@@ -39,7 +41,7 @@ $("#addPlayerButton").on("click", function () {
 
 // BARRES DE COULEURS
 
-const COULEUR_BARRE_VERTE = "rgb(18, 170, 18"
+const COULEUR_BARRE_VERTE = "rgb(18, 170, 40"
 const COULEUR_BARRE_ORANGE = "rgb(240, 152, 0"
 const COULEUR_BARRE_ROUGE = "rgb(197, 8, 8)"
 const COULEUR_BARRE_NOIRE = "rgb(0, 0, 0)"
