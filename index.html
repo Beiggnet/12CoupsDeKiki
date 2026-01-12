@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="utf-8">
-    <title>12 Coups de Pipi</title>
+    <title>12 Coups de Kiki</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="icon" type="image/x-icon" href="icon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,14 +14,19 @@
 
 <body>
     <div class="container">
-        <div class="playerName">
+        <div class="playerNameAdd">
             <label for="playerNameInput" class="textLabel">Joueur :</label>
             <input type="text" placeholder="Nom du joueur..." name="playerNameInput" class="textInput">
         </div>
         <div class="buttonContainer">
-            <button class="buttonAddPlayer">Ajouter</button>
+            <button id="addPlayerButton" class="buttonAddPlayer">Ajouter</button>
         </div>
     </div>
+
+    <div class="listPlayers"></div>
+
+    <script src="lib/easytimer/dist/easytimer.min.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
