@@ -94,7 +94,8 @@ body {
     border-top: 3px solid black;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    
+    column-gap: 30px;
+    row-gap: 60px;
 }
 
 .playerItem {
