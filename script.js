@@ -1,91 +1,5 @@
-// TIMER 
-var timer = new easytimer.Timer();
 
-var chronoValuesInSeconds = 40
-
-
-$(".chronoDurationInput").on("change", function () {
-    $(".chrono").text(changeTimerValues());
-});
-
-$('.playerItem .startButton').click(function () {
-    timer.start({ countdown: true, startValues: { seconds: chronoValuesInSeconds } });
-});
-
-$('.playerItem .pauseButton').click(function () {
-    timer.pause();
-});
-
-$('.playerItem .resetButton').click(function () {
-    timer.reset();
-    timer.pause();
-    $(".chrono").text(changeTimerValues());
-});
-
-timer.addEventListener('secondsUpdated', function (e) {
-    $('.playerItem .chrono').html(timer.getTimeValues().toString());
-});
-
-timer.addEventListener('started', function (e) {
-    $('.playerItem .chrono').html(timer.getTimeValues().toString());
-});
-
-timer.addEventListener('reset', function (e) {
-    $('.playerItem .chrono').html(timer.getTimeValues().toString());
-});
-
-function pad(n) {
-    return String(n).padStart(2, "0");
-}
-
-function changeTimerValues() {
-    s = $(".seconds").val();
-    m = $(".minutes").val();
-
-    getTimerInSeconds()
-
-    return `00:${pad(m)}:${pad(s)}`
-}
-
-function getTimerInSeconds() {
-    const sec = parseInt($(".seconds").val(), 10) || 0;
-    const min = parseInt($(".minutes").val(), 10) || 0;
-    chronoValuesInSeconds = min * 60 + sec;
-    console.log(chronoValuesInSeconds)
-}
-
-
-
-// BARRES DE COULEURS
-
-$('.barreVerte').click(function () {
-    if ($('.barreVerte').css("background-color") == "rgb(0, 0, 0)") {
-        $('.barreVerte').css("background-color", "rgb(18, 170, 18")
-    }
-    else {
-        $('.barreVerte').css("background-color", "rgb(0, 0, 0")
-    }
-});
-
-$('.barreOrange').click(function () {
-    if ($('.barreOrange').css("background-color") == "rgb(0, 0, 0)") {
-        $('.barreOrange').css("background-color", "rgb(240, 152, 0")
-    }
-    else {
-        $('.barreOrange').css("background-color", "rgb(0, 0, 0")
-    }
-});
-
-$('.barreRouge').click(function () {
-    if ($('.barreRouge').css("background-color") == "rgb(0, 0, 0)") {
-        $('.barreRouge').css("background-color", "rgb(197, 8, 8")
-    }
-    else {
-        $('.barreRouge').css("background-color", "rgb(0, 0, 0")
-    }
-});
-
-
+// ---------------------------------------------------------------------------------------------------------------------
 
 // AJOUTER JOUEUR
 $("#addPlayerButton").on("click", function () {
@@ -95,7 +9,7 @@ $("#addPlayerButton").on("click", function () {
     }
 
     const playerItem = `<div class="playerItem">
-            <span class="playerName">${playerName}</span>
+            <span class="playerName"></span>
             <div class="chronoDurationSet">
                 <input class="chronoDurationInput minutes" type="number" value="0" min="0" max="59">
                 <label> min</label>
@@ -112,11 +26,115 @@ $("#addPlayerButton").on("click", function () {
             <div class="barreRouge"></div>
         </div>`;
 
-    console.log($("listPlayers"))
-    
-    $(".listPlayers").append(playerItem);
+    const node = $(playerItem);
+    node.find(".playerName").text(playerName)
+
+    setChronoText(node, getDurationSeconds(node));
+
+    $(".listPlayers").append(node);
     $(".textInput").val("");
 });
 
 
 
+// BARRES DE COULEURS
+
+const COULEUR_BARRE_VERTE = "rgb(18, 170, 18"
+const COULEUR_BARRE_ORANGE = "rgb(240, 152, 0"
+const COULEUR_BARRE_ROUGE = "rgb(197, 8, 8)"
+const COULEUR_BARRE_NOIRE = "rgb(0, 0, 0)"
+
+function toggleBarre(barre, onColor) {
+    const isOff = barre.css("background-color") === COULEUR_BARRE_NOIRE;
+    barre.css("background-color", isOff ? onColor : COULEUR_BARRE_NOIRE)
+}
+
+$(document).on("click", ".playerItem .barreVerte", function () {
+    toggleBarre($(this), COULEUR_BARRE_VERTE);
+});
+
+$(document).on("click", ".playerItem .barreOrange", function () {
+    toggleBarre($(this), COULEUR_BARRE_ORANGE);
+});
+
+$(document).on("click", ".playerItem .barreRouge", function () {
+    toggleBarre($(this), COULEUR_BARRE_ROUGE);
+});
+
+
+
+
+// CHRONO
+
+function pad(n) {
+    return String(n).padStart(2, "0");
+}
+
+function formatMMSS(totalSeconds) {
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return `00:${pad(m)}:${pad(s)}`
+}
+
+function getDurationSeconds(player) {
+    const sec = parseInt(player.find(".seconds").val(), 10) || 0;
+    const min = parseInt(player.find(".minutes").val(), 10) || 0;
+    return min * 60 + sec;
+}
+
+function setChronoText(player, totalSeconds) {
+    player.find(".chrono").text(formatMMSS(totalSeconds));
+}
+
+function getOrCreateTimer(player) {
+    let timer = player.data("timer");
+    if (!timer) {
+        timer = new easytimer.Timer();
+
+        timer.addEventListener('secondsUpdated', function () {
+            player.find(".chrono").text(timer.getTimeValues().toString());
+        });
+        timer.addEventListener('started', function () {
+            player.find(".chrono").text(timer.getTimeValues().toString());
+        });
+        timer.addEventListener('reset', function () {
+            player.find(".chrono").text(timer.getTimeValues().toString());
+        });
+
+        player.data("timer", timer);
+    }
+    return timer;
+}
+
+//----------------
+
+$(document).on("change", ".playerItem .chronoDurationInput", function () {
+    const player = $(this).closest(".playerItem");
+    setChronoText(player, getDurationSeconds(player));
+});
+
+$(document).on("click", ".playerItem .startButton", function () {
+    const player = $(this).closest(".playerItem");
+    const timer = getOrCreateTimer(player);
+    const duration = getDurationSeconds(player);
+
+    timer.start({ countdown: true, startValues: {seconds: duration}})
+});
+
+$(document).on("click", ".playerItem .pauseButton", function () {
+    const player = $(this).closest(".playerItem");
+    const timer = getOrCreateTimer(player);
+
+    timer.pause();
+});
+
+$(document).on("click", ".playerItem .resetButton", function () {
+    const player = $(this).closest(".playerItem");
+    const timer = getOrCreateTimer(player);
+
+    timer.reset();
+    timer.pause();
+
+    setChronoText(player, getDurationSeconds(player))
+    
+});
